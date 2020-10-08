@@ -9,6 +9,7 @@ const bookSchema = new Schema({
     name: { type: String, required: true },
     url: { type: String, required: true },
   },
+  totalBook: { type: Number, required: true },
   issue: { type: Boolean, required: true },
   bookId: { type: Number, required: true },
 });
