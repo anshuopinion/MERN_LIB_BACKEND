@@ -1,6 +1,6 @@
 export default class HttpError extends Error {
-  constructor(message, error) {
+  constructor(message, errorCode) {
     super(message);
-    this.error = error;
+    this.error = errorCode;
   }
 }

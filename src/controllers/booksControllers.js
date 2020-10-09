@@ -1,4 +1,5 @@
 import HttpError from "../model/http-error.js";
+import Book from "../model/book.js";
 const DUMMUY_BOOKS = [
   {
     name: "bookName",
@@ -20,28 +21,27 @@ export const getBook = (req, res, next) => {};
 
 export const getBooksByStudentId = (req, res, next) => {};
 
-export const createBook = (req, res, next) => {
-  const { name, author, total_book, bookid } = req.body;
-  const book = {
+export const createBook = async (req, res, next) => {
+  const { name, author, totalBook, bookId } = req.body;
+  const createdBook = new Book({
     name,
     author,
-    bookImage: {
-      name: "name of image",
-      url: "http://images.amazon.com/images/P/0596004605.01._SCMZZZZZZZ_.jpg",
-    },
+    bookImage:
+      "http://images.amazon.com/images/P/0596004605.01._SCMZZZZZZZ_.jpg",
+    totalBook,
     issue: false,
-    total_book,
-    bookid,
-  };
+    bookId,
+  });
 
-  DUMMUY_BOOKS.push(book);
-  res.status(202).json({ message: "Book added to db" });
+  try {
+    await createdBook.save();
+  } catch (error) {
+    return next(new HttpError("Book Creation  failed, please try again.", 500));
+  }
+
+  res.status(200).json(createdBook);
 };
 
-export const updateBook = (req,res,next) =>{
+export const updateBook = (req, res, next) => {};
 
-}
-
-export const deleteBook = (req,res,next)=>{
-  
-}
+export const deleteBook = (req, res, next) => {};
