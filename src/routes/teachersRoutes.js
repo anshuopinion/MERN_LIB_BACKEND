@@ -3,11 +3,11 @@ import {deleteTeacher, getTeacher ,getTeachers, login, signup, updateTeacher} fr
 const router = express.Router();
 
 router.get("/", getTeachers);
-router.get('/:sid',getTeacher);
+router.get('/:id',getTeacher);
 router.post('/login',login)
 router.post("/signup",signup);
-router.patch('/:sid',updateTeacher);
-router.delete('/:sid',deleteTeacher);
+router.patch('/:id',updateTeacher);
+router.delete('/:id',deleteTeacher);
 
 
 export default router;

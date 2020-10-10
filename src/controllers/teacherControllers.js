@@ -6,6 +6,7 @@ export const login = async (req, res, next) => {
 };
 export const signup = async (req, res, next) => {
   await signupUser(req.body, "teacher", res, next);
+  
 };
 export const updateTeacher = (req, res, next) => {};
 export const deleteTeacher = (req, res, next) => {};

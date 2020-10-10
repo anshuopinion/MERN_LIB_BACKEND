@@ -12,6 +12,14 @@ const UserSchema = new Schema(
       enum: ["student", "teacher", "admin"],
     },
     password: { type: String, required: true, minlength: 6 },
+    data: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      // Instead of a hardcoded model name in `ref`, `refPath` means Mongoose
+      // will look at the `onModel` property to find the right model.
+      refPath: "role",
+    },
+  
   },
   { timestamps: true }
 );

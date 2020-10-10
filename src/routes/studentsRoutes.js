@@ -9,12 +9,11 @@ import {
 } from "../controllers/studentControllers.js";
 import { checkRole, userAuth } from "../utils/Auth.js";
 const router = express.Router();
-router.get("/", userAuth, checkRole(["teacher"]), getStudents);
-router.get("/:sid", getStudent);
-
+router.get("/", getStudents);
+router.get("/:id", getStudent);
 router.post("/login", login);
 router.post("/signup", signup);
-router.patch("/:sid", updateStudent);
-router.delete("/:sid", deleteStudent);
+router.patch("/:id", updateStudent);
+router.delete("/:id", deleteStudent);
 
 export default router;

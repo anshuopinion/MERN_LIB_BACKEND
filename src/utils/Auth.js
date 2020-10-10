@@ -2,8 +2,11 @@ import HttpError from "../model/http-error.js";
 import User from "../model/User.js";
 import jwt from "jsonwebtoken";
 import { SECRET } from "../config/index.js";
-
+import mongoose from "mongoose";
 import passport from "passport";
+import Student from "../model/Student.js";
+import Admin from "../model/Admin.js";
+import Teacher from "../model/Teacher.js";
 export const signupUser = async (reqBody, role, res, next) => {
   let user;
   try {
@@ -11,13 +14,24 @@ export const signupUser = async (reqBody, role, res, next) => {
     if (userExist) {
       return next(new HttpError("Email already exists", 500));
     }
-    user = new User({
-      ...reqBody,
-      role,
-    });
-
-    await user.save();
-    res.status(201).json({ message: "Registered SuccessFully" });
+    const userData = createData(reqBody, role);
+    try {
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      await userData.save({ session: sess });
+      user = new User({
+        ...reqBody,
+        role,
+        data: userData,
+      });
+      await user.save({ session: sess });
+      await sess.commitTransaction();
+      res.status(201).json(user);
+    } catch (error) {
+      return next(
+        new HttpError(`Unable to signup ${role} Try Again later.`, 500)
+      );
+    }
   } catch (error) {
     console.log(user);
     return next(new HttpError("Unable to signup", 500));
@@ -37,6 +51,7 @@ export const userLogin = async (userCreds, role, res, next) => {
       );
     }
     let result = {
+      userId: user._id,
       email: user.email,
       role: user.role,
       token: `Bearer ${token}`,
@@ -59,4 +74,29 @@ export const checkRole = (roles) => (req, res, next) =>
     ? res.status(401).json("Unauthorized")
     : next();
 
-  
+const createData = (body, role) => {
+  if (role.toString() === "student") {
+    const student = new Student({
+      studentId: body.studentId,
+      mobile: body.mobile,
+      universityId: body.universityId,
+      libCard: body.libCard,
+      semester: body.semester,
+      year: body.year,
+    });
+    return student;
+  } else if (role === "teacher") {
+    console.log("iamg inside teacher");
+    const teacher = new Teacher({
+      mobile: body.mobile,
+    });
+    return teacher;
+  } else if (role === "admin") {
+    const admin = new Admin({
+      mobile: body.mobile,
+    });
+    return admin;
+  } else {
+    throw Error("Wrong Role");
+  }
+};
