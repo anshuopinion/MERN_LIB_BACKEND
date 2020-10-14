@@ -9,6 +9,7 @@ const studentSchema = new Schema({
   libCard: { type: Number, required: true },
   semester: { type: Number, required: true },
   year: { type: Number, required: true },
+  // books:[{type:Schema.Types.ObjectId,ref:'book'}]
 });
 
 export default mongoose.model("student", studentSchema);

@@ -11,4 +11,5 @@ const bookSchema = new Schema({
   bookId: { type: Number, required: true },
 });
 
+
 export default mongoose.model("book", bookSchema);

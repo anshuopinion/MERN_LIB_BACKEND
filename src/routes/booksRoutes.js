@@ -8,12 +8,13 @@ import {
   updateBook,
 } from "../controllers/booksControllers.js";
 import { checkRole, userAuth } from "../utils/Auth.js";
+import { createBookValidation } from "../validation/bookValidation/bookValidation.js";
 const router = express.Router();
-
-router.get("/", userAuth, checkRole(["student"]), getBooks);
+// userAuth, checkRole(["student"])
+router.get("/",  getBooks);
 router.get("/:bid", getBook);
 router.get("/:student/:sid", getBooksByStudentId);
-router.post("/", createBook);
+router.post("/", createBookValidation, createBook);
 router.patch("/:bid", updateBook);
 router.delete("/:bid", deleteBook);
 

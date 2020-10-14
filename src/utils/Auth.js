@@ -33,7 +33,6 @@ export const signupUser = async (reqBody, role, res, next) => {
       );
     }
   } catch (error) {
-    console.log(user);
     return next(new HttpError("Unable to signup", 500));
   }
 };
@@ -41,8 +40,14 @@ export const signupUser = async (reqBody, role, res, next) => {
 export const userLogin = async (userCreds, role, res, next) => {
   let { email, password } = userCreds;
   const user = await User.login(email, password, role, next);
+
+  if (!user) {
+    return next(new HttpError("Invalid Email Id", 404));
+  }
+
   try {
     let token;
+
     if (user) {
       token = jwt.sign(
         { userId: user._id, role: user.role, email: user.email },
