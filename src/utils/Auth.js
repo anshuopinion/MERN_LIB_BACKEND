@@ -78,10 +78,10 @@ export const checkRole = (roles) => (req, res, next) =>
 const createData = (body, role) => {
   if (role.toString() === "student") {
     const student = new Student({
-      studentId: body.studentId,
+      student_id: body.student_id,
       mobile: body.mobile,
-      universityId: body.universityId,
-      libCard: body.libCard,
+      university_id: body.university_id,
+      library_card: body.library_card,
       semester: body.semester,
       year: body.year,
     });
