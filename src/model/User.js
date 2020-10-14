@@ -19,7 +19,6 @@ const UserSchema = new Schema(
       // will look at the `onModel` property to find the right model.
       refPath: "role",
     },
-  
   },
   { timestamps: true }
 );
@@ -35,21 +34,22 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.statics.login = async function (email, password, role, next) {
-  let existingUser;
   try {
-    existingUser = await this.findOne({ email: email });
+    const existingUser = await this.findOne({ email: email }).populate("data");
+    if (existingUser) {
+      // User Role check
+      existingUser.role !== role &&
+        next(new HttpError("Please make sure login from right portal", 400));
+      // If role correct , Compare Password
+      const auth = await bcrypt.compare(password, existingUser.password);
+      //Return user if password match else return incorrect password message
+      if (auth) return existingUser;
+      else return next(new HttpError("Password Incorrect", 401));
+    } else {
+      return next(new HttpError("Invalid Email Address", 401));
+    }
   } catch (error) {
     return next(new HttpError("Signin  failed, Please try again later", 400));
-  }
-  existingUser.role !== role &&
-    next(new HttpError("Please make sure login from right portal", 400));
-
-  if (existingUser) {
-    const auth = await bcrypt.compare(password, existingUser.password);
-    if (auth) return existingUser;
-    else return next(new HttpError("Password Incorrect", 401));
-  } else {
-    return next(new HttpError("Invalid Email Address", 401));
   }
 };
 

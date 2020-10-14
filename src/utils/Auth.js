@@ -39,14 +39,10 @@ export const signupUser = async (reqBody, role, res, next) => {
 
 export const userLogin = async (userCreds, role, res, next) => {
   let { email, password } = userCreds;
-  const user = await User.login(email, password, role, next);
-
-  if (!user) {
-    return next(new HttpError("Invalid Email Id", 404));
-  }
 
   try {
     let token;
+    const user = await User.login(email, password, role, next);
 
     if (user) {
       token = jwt.sign(
@@ -55,9 +51,9 @@ export const userLogin = async (userCreds, role, res, next) => {
         { expiresIn: 60 * 60 }
       );
     }
+
     let result = {
       userId: user._id,
-      email: user.email,
       role: user.role,
       token: `Bearer ${token}`,
     };

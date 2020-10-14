@@ -24,15 +24,15 @@ export const getBook = async (req, res, next) => {
 export const getBooksByStudentId = (req, res, next) => {};
 
 export const createBook = async (req, res, next) => {
-  const { name, author, totalBook, bookId } = req.body;
+  const { name, author, total_books, book_id } = req.body;
   const createdBook = new Book({
     name,
     author,
-    bookImage:
+    book_image:
       "http://images.amazon.com/images/P/0596004605.01._SCMZZZZZZZ_.jpg",
-    totalBook,
+    total_books,
     issue: false,
-    bookId,
+    book_id,
   });
 
   try {
@@ -45,15 +45,15 @@ export const createBook = async (req, res, next) => {
 };
 
 export const updateBook = async (req, res, next) => {
-  const { name, author, bookId, totalBook } = req.body;
+  const { name, author, book_id, total_books } = req.body;
   const bid = req.params.bid;
   try {
     const book = await Book.findById(bid);
     if (book) {
       name && (book.name = name);
       author && (book.author = author);
-      bookId && (book.bookId = bookId);
-      totalBook && (book.totalBook = totalBook);
+      book_id && (book.book_id = book_id);
+      total_book && (book.total_books = total_books);
     }
     try {
       await book.save();
