@@ -10,6 +10,7 @@ export const getStudent = async (req, res, next) => {
   await getUser(req, res, next, "student");
 };
 export const login = async (req, res, next) => {
+
   await userLogin(req.body, "student", res, next);
 };
 export const signup = async (req, res, next) => {

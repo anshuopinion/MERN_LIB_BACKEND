@@ -50,6 +50,10 @@ export const userLogin = async (userCreds, role, res, next) => {
         SECRET,
         { expiresIn: 60 * 60 }
       );
+      res.cookie("jwt", token, {
+        maxAge: 1000 * 10,
+        secure: true,
+      });
     }
 
     let result = {
@@ -57,6 +61,7 @@ export const userLogin = async (userCreds, role, res, next) => {
       role: user.role,
       token: `Bearer ${token}`,
     };
+
     res.status(201).json(result);
   } catch (error) {
     return next(new HttpError("Unable to create Token", 500));
