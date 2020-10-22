@@ -50,10 +50,6 @@ export const userLogin = async (userCreds, role, res, next) => {
         SECRET,
         { expiresIn: 60 * 60 }
       );
-      res.cookie("jwt", token, {
-        maxAge: 1000 * 10,
-        secure: true,
-      });
     }
 
     let result = {
@@ -61,7 +57,10 @@ export const userLogin = async (userCreds, role, res, next) => {
       role: user.role,
       token: `Bearer ${token}`,
     };
-
+    res.cookie("user", result, {
+      maxAge: 1000 * 60 * 60,
+      // httpOnly: true,
+    });
     res.status(201).json(result);
   } catch (error) {
     return next(new HttpError("Unable to create Token", 500));
@@ -75,10 +74,14 @@ const validateEmail = async (email) => {
 
 export const userAuth = passport.authenticate("jwt", { session: false });
 
-export const checkRole = (roles) => (req, res, next) =>
-  !roles.includes(req.user.role)
-    ? res.status(401).json("Unauthorized")
-    : next();
+export const checkRole = (roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    res.status(401).json("Unauthorized");
+  } else {
+    next();
+  }
+};
+// !roles.includes(req.user.role) ? res.status(401).json("Unauthorized") : next();
 
 const createData = (body, role) => {
   if (role.toString() === "student") {

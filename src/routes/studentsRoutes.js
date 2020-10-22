@@ -10,10 +10,10 @@ import {
 import { checkRole, userAuth } from "../utils/Auth.js";
 import { signupValidation } from "../validation/studentValidation/studentValidation.js";
 const router = express.Router();
-router.get("/", getStudents);
+router.get("/", userAuth, checkRole(["student"]), getStudents);
 router.get("/:id", getStudent);
 router.post("/login", login);
-router.post("/signup",  signupValidation, signup);
+router.post("/signup", signupValidation, signup);
 router.patch("/:id", updateStudent);
 router.delete("/:id", deleteStudent);
 

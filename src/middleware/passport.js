@@ -19,4 +19,41 @@ export default (passport) => {
     })
   );
 };
- 
+
+// for http only cookie system
+
+// import passportJWT from "passport-jwt";
+// const JWTStrategy = passportJWT.Strategy;
+
+// import { SECRET } from "../config/index.js";
+
+// const cookieExtractor = (req) => {
+//   let jwt = null;
+
+//   if (req && req.cookies) {
+//     jwt = req.cookies["jwt"];
+//   }
+
+//   return jwt;
+// };
+
+// export default (passport) => {
+//   passport.use(
+//     "jwt",
+//     new JWTStrategy(
+//       {
+//         jwtFromRequest: cookieExtractor,
+//         secretOrKey: SECRET,
+//       },
+//       (jwtPayload, done) => {
+//         const { expiration } = jwtPayload;
+
+//         if (Date.now() > expiration) {
+//           done("Unauthorized", false);
+//         }
+
+//         done(null, jwtPayload);
+//       }
+//     )
+//   );
+// };
