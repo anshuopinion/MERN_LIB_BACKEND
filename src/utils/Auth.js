@@ -57,7 +57,7 @@ export const userLogin = async (userCreds, role, res, next) => {
       role: user.role,
       token: `Bearer ${token}`,
     };
-    res.cookie("user", result, {
+    res.cookie("jwt", result, {
       maxAge: 1000 * 60 * 60,
       // httpOnly: true,
     });

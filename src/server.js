@@ -25,7 +25,7 @@ mPassport(passport);
 app.use("/api/books", booksRoute);
 app.use("/api/students", studentsRoute);
 app.use("/api/teachers", teachersRoute);
-app.use("/api/admin", adminRoute);
+app.use("/api/admins", adminRoute);
 
 app.use(() => {
   const error = new HttpError("Could not find this route", 404);

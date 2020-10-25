@@ -53,7 +53,7 @@ export const updateBook = async (req, res, next) => {
       name && (book.name = name);
       author && (book.author = author);
       book_id && (book.book_id = book_id);
-      total_book && (book.total_books = total_books);
+      total_books && (book.total_books = total_books);
     }
     try {
       await book.save();
