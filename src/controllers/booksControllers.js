@@ -49,6 +49,7 @@ export const updateBook = async (req, res, next) => {
   const bid = req.params.bid;
   try {
     const book = await Book.findById(bid);
+    if (!book) return next(new HttpError("Book Not Found", 404));
     if (book) {
       name && (book.name = name);
       author && (book.author = author);

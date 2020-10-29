@@ -95,7 +95,6 @@ const createData = (body, role) => {
     });
     return student;
   } else if (role === "teacher") {
-    console.log("iamg inside teacher");
     const teacher = new Teacher({
       mobile: body.mobile,
     });

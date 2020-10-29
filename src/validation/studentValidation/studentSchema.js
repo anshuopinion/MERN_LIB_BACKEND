@@ -12,4 +12,13 @@ export const studentValidationSchema = {
     semester: Joi.number().min(1).max(8),
     year: Joi.number().min(1928).max(2020),
   }),
+  updateStudent: Joi.object({
+    name: Joi.string().min(1),
+    student_id: Joi.number(),
+    mobile: Joi.number().min(1000000000).max(9999999999),
+    university_id: Joi.number(),
+    library_card: Joi.number().max(1000),
+    semester: Joi.number().min(1).max(8),
+    year: Joi.number().min(1928).max(2020),
+  }),
 };
