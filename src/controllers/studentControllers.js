@@ -43,7 +43,7 @@ export const updateStudent = async (req, res, next) => {
     try {
       await user.save();
       await user.data.save();
-      res.status(200).json({ ...user.data, name });
+      res.status(200).json({ name, _id: userId, data: user.data });
     } catch (error) {
       return next(
         new HttpError("Could not Update Student,someting went wrong", 500)
