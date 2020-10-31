@@ -55,4 +55,17 @@ export const updateStudent = async (req, res, next) => {
     );
   }
 };
-export const deleteStudent = (req, res, next) => {};
+
+export const deleteStudent = async (req, res, next) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      return next(new HttpError("user not found ,invalid id", 404));
+    } else {
+      res.status(204).json(user);
+    }
+  } catch (error) {
+    return next(new HttpError("Unable to delete , Some thing went wrong", 500));
+  }
+};
