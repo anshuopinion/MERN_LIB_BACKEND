@@ -48,7 +48,7 @@ export const userLogin = async (userCreds, role, res, next) => {
       token = jwt.sign(
         { userId: user._id, role: user.role, email: user.email },
         SECRET,
-        { expiresIn: 60 * 60 }
+        { expiresIn: 60 * 60 * 60 }
       );
     }
 
@@ -58,10 +58,10 @@ export const userLogin = async (userCreds, role, res, next) => {
       token: `Bearer ${token}`,
     };
     res.cookie("jwt", result, {
-      maxAge: 1000 * 60 * 60,
+      maxAge: 1000 * 60 * 60 * 60,
       // httpOnly: true,
     });
-    res.status(201).json(result);
+    res.status(200).json(result);
   } catch (error) {
     return next(new HttpError("Unable to create Token", 500));
   }

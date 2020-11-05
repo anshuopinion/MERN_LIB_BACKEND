@@ -63,9 +63,11 @@ export const deleteStudent = async (req, res, next) => {
     if (!user) {
       return next(new HttpError("user not found ,invalid id", 404));
     } else {
-      res.status(204).json(user);
+      res.status(204).json({ message: `Student Deleted: ${userId}` });
     }
   } catch (error) {
     return next(new HttpError("Unable to delete , Some thing went wrong", 500));
   }
 };
+
+

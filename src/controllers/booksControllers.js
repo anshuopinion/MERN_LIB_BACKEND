@@ -84,3 +84,21 @@ export const deleteBook = async (req, res, next) => {
     return next(new HttpError("Unable to delete , Some thing went wrong", 500));
   }
 };
+export const issueBook = async (req, res, next) => {
+  const bid = req.params.bid;
+  try {
+    const book = await Book.findById(bid);
+    if (!book) {
+      return next(new HttpError("Book Not Found,Invalid Id", 404));
+    } else {
+      book.issue = true;
+      await book.save();
+
+      res.status(200).json({ message: "Book Issued" });
+    }
+  } catch (error) {
+    return next(
+      new HttpError("Unable to Issue Book, Something went Wrong", 500)
+    );
+  }
+};
