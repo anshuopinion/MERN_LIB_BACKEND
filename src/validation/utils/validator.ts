@@ -1,5 +1,12 @@
-import HttpError from "../../model/http-error.js";
-const validator = async (schemaName, body, next) => {
+import { NextFunction } from "express";
+import Joi from "joi";
+import HttpError from "../../model/http-error";
+
+const validator = async (
+  schemaName: Joi.ObjectSchema,
+  body: object,
+  next: NextFunction
+) => {
   const value = await schemaName.validate(body);
 
   try {

@@ -1,6 +1,13 @@
 import User from "../../model/User.js";
 import HttpError from "../../model/http-error.js";
-export const getUser = async (req, res, next, type) => {
+import { NextFunction, Request, Response } from "express";
+import { RoleType } from "../../model/User";
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  type: string
+) => {
   const userId = req.params.id;
 
   try {
@@ -22,7 +29,12 @@ export const getUser = async (req, res, next, type) => {
   }
 };
 
-export const getUsers = async (req, res, next, role) => {
+export const getUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  role: RoleType
+) => {
   let users;
   try {
     users = await User.find({ role }, "-password -__v ").populate("data");

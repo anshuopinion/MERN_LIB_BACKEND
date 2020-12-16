@@ -1,22 +1,24 @@
-import HttpError from "../model/http-error.js";
-import User from "../model/User.js";
-import { signupUser, userLogin } from "../utils/Auth.js";
-import { getUser, getUsers } from "./shared/sharedContollers.js";
+import { RequestHandler } from "express";
 
-export const getStudents = async (req, res, next) => {
-  await getUsers(req, res, next, "student");
+import HttpError from "../model/http-error";
+import User, { RoleType } from "../model/User";
+import { signupUser, userLogin } from "../utils/Auth";
+import { getUser, getUsers } from "./shared/sharedContollers";
+
+export const getStudents: RequestHandler = async (req, res, next) => {
+  await getUsers(req, res, next, RoleType.student);
 };
 
-export const getStudent = async (req, res, next) => {
-  await getUser(req, res, next, "student");
+export const getStudent: RequestHandler = async (req, res, next) => {
+  await getUser(req, res, next, RoleType.student);
 };
-export const login = async (req, res, next) => {
-  await userLogin(req.body, "student", res, next);
+export const login: RequestHandler = async (req, res, next) => {
+  await userLogin(req.body as any, RoleType.student, res, next);
 };
-export const signup = async (req, res, next) => {
-  await signupUser(req.body, "student", res, next);
+export const signup: RequestHandler = async (req, res, next) => {
+  await signupUser(req.body, RoleType.student, res, next);
 };
-export const updateStudent = async (req, res, next) => {
+export const updateStudent: RequestHandler = async (req, res, next) => {
   const {
     student_id,
     mobile,
@@ -27,7 +29,6 @@ export const updateStudent = async (req, res, next) => {
     name,
   } = req.body;
   const userId = req.params.id;
-
   try {
     const user = await User.findById(userId).populate("data");
     if (!user) return next(new HttpError("User Not Found", 404));
@@ -56,7 +57,7 @@ export const updateStudent = async (req, res, next) => {
   }
 };
 
-export const deleteStudent = async (req, res, next) => {
+export const deleteStudent: RequestHandler = async (req, res, next) => {
   const userId = req.params.id;
   try {
     const user = await User.findByIdAndDelete(userId);
@@ -69,5 +70,3 @@ export const deleteStudent = async (req, res, next) => {
     return next(new HttpError("Unable to delete , Some thing went wrong", 500));
   }
 };
-
-

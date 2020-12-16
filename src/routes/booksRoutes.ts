@@ -8,7 +8,7 @@ import {
   updateBook,
   issueBook,
 } from "../controllers/booksControllers.js";
-import { checkRole, userAuth } from "../utils/Auth.js";
+// import { checkRole, userAuth } from "../utils/Auth.js";
 import {
   createBookValidation,
   updateBookValidation,
@@ -19,8 +19,8 @@ const router = express.Router();
 router.get("/", getBooks);
 router.get("/:bid", getBook);
 router.get("/:student/:sid", getBooksByStudentId);
+router.get("/:bid/student/:id", issueBook);
 router.post("/", createBookValidation, createBook);
-router.put("/book-issue/:bid", issueBook);
 router.patch("/:bid", updateBookValidation, updateBook);
 router.delete("/:bid", deleteBook);
 

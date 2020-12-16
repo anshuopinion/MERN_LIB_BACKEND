@@ -1,18 +1,18 @@
-import express from "express";
+import express, { Request, Response, ErrorRequestHandler } from "express";
 import cors from "cors";
-import booksRoute from "./routes/booksRoutes.js";
-import studentsRoute from "./routes/studentsRoutes.js";
-import teachersRoute from "./routes/teachersRoutes.js";
-import adminRoute from "./routes/adminRoutes.js";
+import booksRoute from "./routes/booksRoutes";
+import studentsRoute from "./routes/studentsRoutes";
+import teachersRoute from "./routes/teachersRoutes";
+import adminRoute from "./routes/adminRoutes";
 import mongoose from "mongoose";
-import HttpError from "./model/http-error.js";
-import { DB, PORT } from "./config/index.js";
+import HttpError from "./model/http-error";
+import { DB, PORT } from "./config/index";
 import passport from "passport";
-import mPassport from "./middleware/passport.js";
+import mPassport from "./middleware/passport";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const port = PORT || 900;
+const port: number = PORT || 9000;
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(cookieParser());
@@ -21,25 +21,31 @@ app.use(express.json());
 app.use(passport.initialize());
 mPassport(passport);
 
-//Routes
+// Routes;
 app.use("/api/books", booksRoute);
 app.use("/api/students", studentsRoute);
 app.use("/api/teachers", teachersRoute);
 app.use("/api/admins", adminRoute);
-
+app.get("/api/test", (req: Request, res: Response) => {
+  res.json({ message: "jsom" });
+});
 app.use(() => {
   const error = new HttpError("Could not find this route", 404);
   throw error;
 });
 
-app.use((error, req, res, next) => {
-  if (res.headerSent) {
+const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
+  console.log(error.message);
+
+  if (res.headersSent) {
     return next(error);
   }
   res
     .status(error.code || 500)
     .json({ message: error.message || "An Unknown error occured" });
-});
+};
+
+app.use(errorHandler);
 
 mongoose
   .connect(DB, {
@@ -54,5 +60,5 @@ mongoose
     });
   })
   .catch(() => {
-    throw new HttpError("Unable to connect database");
+    throw new HttpError("Unable to connect database", 501);
   });

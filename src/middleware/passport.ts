@@ -1,6 +1,7 @@
 import User from "../model/User.js";
 import { SECRET } from "../config/index.js";
 import passportJwt from "passport-jwt";
+import { PassportStatic } from "passport";
 
 const { Strategy, ExtractJwt } = passportJwt;
 const options = {
@@ -8,7 +9,7 @@ const options = {
   secretOrKey: SECRET,
 };
 
-export default (passport) => {
+export default (passport: PassportStatic) => {
   passport.use(
     new Strategy(options, async (payload, done) => {
       await User.findById(payload.userId)

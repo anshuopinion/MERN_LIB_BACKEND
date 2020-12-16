@@ -1,16 +1,18 @@
-import HttpError from "../model/http-error.js";
-import Book from "../model/Book.js";
+import HttpError from "../model/http-error";
+import Book from "../model/Book";
+import User from "../model/User";
+import { RequestHandler } from "express";
 
-export const getBooks = async (req, res, next) => {
+export const getBooks: RequestHandler = async (req, res, next) => {
   try {
-    const books = await Book.find();
+    const books: object = await Book.find();
     res.status(200).json(books);
   } catch (error) {
     return next(new HttpError("Unable to fetch all books", 500));
   }
 };
-export const getBook = async (req, res, next) => {
-  const bid = req.params.bid;
+export const getBook: RequestHandler = async (req, res, next) => {
+  const bid: string = req.params.bid;
 
   try {
     const book = await Book.findById(bid);
@@ -21,9 +23,9 @@ export const getBook = async (req, res, next) => {
   }
 };
 
-export const getBooksByStudentId = (req, res, next) => {};
+export const getBooksByStudentId: RequestHandler = (req, res, next) => {};
 
-export const createBook = async (req, res, next) => {
+export const createBook: RequestHandler = async (req, res, next) => {
   const { name, author, total_books, book_id } = req.body;
   const createdBook = new Book({
     name,
@@ -44,12 +46,15 @@ export const createBook = async (req, res, next) => {
   res.status(200).json(createdBook);
 };
 
-export const updateBook = async (req, res, next) => {
+export const updateBook: RequestHandler = async (req, res, next) => {
   const { name, author, book_id, total_books } = req.body;
   const bid = req.params.bid;
+
   try {
     const book = await Book.findById(bid);
+
     if (!book) return next(new HttpError("Book Not Found", 404));
+
     if (book) {
       name && (book.name = name);
       author && (book.author = author);
@@ -71,7 +76,7 @@ export const updateBook = async (req, res, next) => {
   }
 };
 
-export const deleteBook = async (req, res, next) => {
+export const deleteBook: RequestHandler = async (req, res, next) => {
   const bid = req.params.bid;
   try {
     const book = await Book.findByIdAndDelete(bid);
@@ -84,21 +89,31 @@ export const deleteBook = async (req, res, next) => {
     return next(new HttpError("Unable to delete , Some thing went wrong", 500));
   }
 };
-export const issueBook = async (req, res, next) => {
-  const bid = req.params.bid;
-  try {
-    const book = await Book.findById(bid);
-    if (!book) {
-      return next(new HttpError("Book Not Found,Invalid Id", 404));
-    } else {
-      book.issue = true;
-      await book.save();
+export const issueBook: RequestHandler = async (req, res, next) => {
+  const bookId = req.params.bid;
+  const studentId = req.params.id;
 
-      res.status(200).json({ message: "Book Issued" });
+  try {
+    // getStudent from student id
+    const student = await User.findById(studentId).populate("data");
+    if (!student) return next(new HttpError("Student Not Found", 404));
+    // getBook from book id
+    const book = await Book.findById(bookId);
+    if (!book) return next(new HttpError("Book Not Found", 404));
+
+    try {
+      student.data.requestedBooks.push(book);
+      await student.data.save();
+      res.status(201).json({ message: "Book requested" });
+    } catch (error) {
+      return next(
+        new HttpError(
+          "Unable to add book to request array,something went wrong",
+          500
+        )
+      );
     }
   } catch (error) {
-    return next(
-      new HttpError("Unable to Issue Book, Something went Wrong", 500)
-    );
+    new HttpError("Unable to Issue Book, Something went Wrong", 500);
   }
 };

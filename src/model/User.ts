@@ -1,15 +1,38 @@
-import mongoose from "mongoose";
-const { Schema, model } = mongoose;
+import { Schema, model, Document, Model } from "mongoose";
 import bcrypt from "bcrypt";
-import HttpError from "./http-error.js";
-const UserSchema = new Schema(
+import HttpError from "./http-error";
+import { NextFunction } from "express";
+
+export enum RoleType {
+  student = "student",
+  teacher = "teacher",
+  admin = "admin",
+}
+
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  role: RoleType;
+  password: string;
+  data: any;
+}
+interface IUserModel extends Model<IUser> {
+  login(
+    email: string,
+    password: string,
+    role: RoleType,
+    next: NextFunction
+  ): IUser;
+}
+
+const UserSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     role: {
-      type: String,
-      default: "student",
-      enum: ["student", "teacher", "admin"],
+      type: RoleType,
+      default: RoleType.student,
+      enum: Object.values(RoleType),
     },
     password: { type: String, required: true, minlength: 6 },
     data: {
@@ -23,7 +46,7 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function (next) {
+UserSchema.pre<IUser>("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
@@ -33,11 +56,16 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.statics.login = async function (email, password, role, next) {
+UserSchema.statics.login = async function (
+  email: string,
+  password: string,
+  role: RoleType,
+  next: NextFunction
+) {
   try {
     const existingUser = await this.findOne({ email: email }).populate("data");
     if (existingUser) {
-      // User Role check
+      // IUser Role check
       existingUser.role !== role &&
         next(new HttpError("Please make sure login from right portal", 400));
       // If role correct , Compare Password
@@ -53,4 +81,4 @@ UserSchema.statics.login = async function (email, password, role, next) {
   }
 };
 
-export default model("user", UserSchema);
+export default model<IUser, IUserModel>("user", UserSchema);

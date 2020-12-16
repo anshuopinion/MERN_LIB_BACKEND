@@ -1,14 +1,21 @@
 import HttpError from "../model/http-error.js";
-import User from "../model/User.js";
+import User, { RoleType } from "../model/User.js";
 import jwt from "jsonwebtoken";
 import { SECRET } from "../config/index.js";
 import mongoose from "mongoose";
 import passport from "passport";
-import Student from "../model/Student.js";
+import Student, { IStudent } from "../model/Student.js";
 import Admin from "../model/Admin.js";
 import Teacher from "../model/Teacher.js";
-export const signupUser = async (reqBody, role, res, next) => {
+import { NextFunction, Response } from "express";
+export const signupUser = async (
+  reqBody: IStudent,
+  role: RoleType,
+  res: Response,
+  next: NextFunction
+) => {
   let user;
+
   try {
     let userExist = await validateEmail(reqBody.email);
     if (userExist) {
@@ -37,7 +44,12 @@ export const signupUser = async (reqBody, role, res, next) => {
   }
 };
 
-export const userLogin = async (userCreds, role, res, next) => {
+export const userLogin = async (
+  userCreds: any,
+  role: RoleType,
+  res: Response,
+  next: NextFunction
+) => {
   let { email, password } = userCreds;
 
   try {
@@ -67,14 +79,18 @@ export const userLogin = async (userCreds, role, res, next) => {
   }
 };
 
-const validateEmail = async (email) => {
+const validateEmail = async (email: string) => {
   let user = await User.findOne({ email });
   return user ? true : false;
 };
 
 export const userAuth = passport.authenticate("jwt", { session: false });
 
-export const checkRole = (roles) => (req, res, next) => {
+export const checkRole = (roles: RoleType[]) => (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
   if (!roles.includes(req.user.role)) {
     res.status(401).json("Unauthorized");
   } else {
@@ -83,8 +99,8 @@ export const checkRole = (roles) => (req, res, next) => {
 };
 // !roles.includes(req.user.role) ? res.status(401).json("Unauthorized") : next();
 
-const createData = (body, role) => {
-  if (role.toString() === "student") {
+const createData = (body: any, role: RoleType) => {
+  if (role.toString() === RoleType.student) {
     const student = new Student({
       student_id: body.student_id,
       mobile: body.mobile,
@@ -94,12 +110,12 @@ const createData = (body, role) => {
       year: body.year,
     });
     return student;
-  } else if (role === "teacher") {
+  } else if (role === RoleType.teacher) {
     const teacher = new Teacher({
       mobile: body.mobile,
     });
     return teacher;
-  } else if (role === "admin") {
+  } else if (role === RoleType.admin) {
     const admin = new Admin({
       mobile: body.mobile,
     });
