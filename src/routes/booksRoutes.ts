@@ -1,4 +1,5 @@
 import express from "express";
+import { RoleType } from "../model/User";
 import {
   createBook,
   deleteBook,
@@ -8,7 +9,7 @@ import {
   updateBook,
   issueBook,
 } from "../controllers/booksControllers.js";
-// import { checkRole, userAuth } from "../utils/Auth.js";
+import { checkRole, userAuth } from "../utils/Auth.js";
 import {
   createBookValidation,
   updateBookValidation,
@@ -16,7 +17,12 @@ import {
 const router = express.Router();
 
 // userAuth, checkRole(["student"])
-router.get("/", getBooks);
+router.get(
+  "/",
+  userAuth,
+  checkRole([RoleType.student, RoleType.teacher]),
+  getBooks
+);
 router.get("/:bid", getBook);
 router.get("/:student/:sid", getBooksByStudentId);
 router.get("/:bid/student/:id", issueBook);

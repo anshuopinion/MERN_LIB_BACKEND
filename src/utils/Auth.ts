@@ -91,8 +91,6 @@ export const checkRole = (roles: RoleType[]): RequestHandler => (
   res,
   next
 ) => {
-  console.log(roles);
-
   if (!roles.includes(req.user.role)) {
     res.status(401).json("Unauthorized");
   } else {

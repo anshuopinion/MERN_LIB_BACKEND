@@ -10,10 +10,11 @@ import { DB, PORT } from "./config/index";
 import passport from "passport";
 import mPassport from "./middleware/passport";
 import cookieParser from "cookie-parser";
-
+import morgan from "morgan";
 const app = express();
-const port: number = PORT || 9000;
 
+const port: number = PORT || 9000;
+app.use(morgan("tiny"));
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(cookieParser());
 app.use(express.json());
