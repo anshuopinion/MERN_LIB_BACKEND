@@ -7,7 +7,7 @@ import passport from "passport";
 import Student, { IStudent } from "../model/Student.js";
 import Admin from "../model/Admin.js";
 import Teacher from "../model/Teacher.js";
-import { NextFunction, Response } from "express";
+import { NextFunction, RequestHandler, Response } from "express";
 export const signupUser = async (
   reqBody: IStudent,
   role: RoleType,
@@ -86,11 +86,13 @@ const validateEmail = async (email: string) => {
 
 export const userAuth = passport.authenticate("jwt", { session: false });
 
-export const checkRole = (roles: RoleType[]) => (
+export const checkRole = (roles: RoleType[]): RequestHandler => (
   req: any,
-  res: Response,
-  next: NextFunction
+  res,
+  next
 ) => {
+  console.log(roles);
+
   if (!roles.includes(req.user.role)) {
     res.status(401).json("Unauthorized");
   } else {

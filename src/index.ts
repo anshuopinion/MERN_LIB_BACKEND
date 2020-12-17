@@ -1,4 +1,4 @@
-import express, { Request, Response, ErrorRequestHandler } from "express";
+import express, { ErrorRequestHandler } from "express";
 import cors from "cors";
 import booksRoute from "./routes/booksRoutes";
 import studentsRoute from "./routes/studentsRoutes";
@@ -26,9 +26,7 @@ app.use("/api/books", booksRoute);
 app.use("/api/students", studentsRoute);
 app.use("/api/teachers", teachersRoute);
 app.use("/api/admins", adminRoute);
-app.get("/api/test", (req: Request, res: Response) => {
-  res.json({ message: "jsom" });
-});
+
 app.use(() => {
   const error = new HttpError("Could not find this route", 404);
   throw error;
